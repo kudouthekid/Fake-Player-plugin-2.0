@@ -434,3 +434,13 @@ attack-mob:
 # ═══════════════════════════════════════════════════════════════════════════════
 metrics:
   enabled: true
+
+custom-bot-settings:
+  # Bot hanya akan meminum Ominous Bottle jika tidak ada Raid, atau Raid sudah Victory.
+  ominous-bottle-safety: true
+  
+  # Skema penyerangan PVE:
+  # 'DEFAULT' = Mengikuti settingan default/wantedTypes.
+  # 'HOSTILES_ONLY' = Hanya menyerang mob Hostile (Zombie, Skeleton, Creeper, dll) TANPA menyerang passive mob (Sapi, Babi, Villager).
+  # 'RAIDERS_ONLY' = Hanya menyerang Illager/Raider (Pillager, Vindicator, Ravager, Witch).
+  attack-scheme: 'HOSTILES_ONLY'
