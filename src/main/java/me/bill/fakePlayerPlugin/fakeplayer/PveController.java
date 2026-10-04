@@ -23,6 +23,8 @@ import me.bill.fakePlayerPlugin.command.AttackCommand;
 import me.bill.fakePlayerPlugin.config.Config;
 import me.bill.fakePlayerPlugin.util.FppScheduler;
 
+import org.bukkit.entity.Raider;
+import me.bill.fakePlayerPlugin.config.Config;
 /**
  * Core PVE engine - the executor behind the per-bot "🗡 ᴘᴠᴇ" settings. Previously those settings
  * only fired an event a removed extension used to consume, so nothing ever scanned or attacked.
@@ -187,21 +189,32 @@ public final class PveController {
     private @Nullable LivingEntity scanForTarget(FakePlayer fp, Player bot, double range) {
         Set<String> wantedTypes = fp.getPveMobTypes();
         boolean nearestPriority = !"lowest-health".equalsIgnoreCase(fp.getPvePriority());
+        String scheme = Config.getPveAttackScheme(); // Ambil skema attack dari Config
 
         LivingEntity best = null;
         double bestScore = Double.MAX_VALUE;
         for (Entity entity : bot.getNearbyEntities(range, range, range)) {
             if (!(entity instanceof LivingEntity living) || living.isDead() || !living.isValid()) continue;
-            if (manager.getByUuid(living.getUniqueId()) != null) continue; // never target other bots
-            if (living instanceof Player) continue; // PVE only - real players are never targets
-            if (wantedTypes.isEmpty()) {
+            if (manager.getByUuid(living.getUniqueId()) != null) continue; // jangan serang bot lain
+            if (living instanceof Player) continue;
+
+            // === FILTER SKEMA ATTACK BARU ===
+            if (scheme.equals("RAIDERS_ONLY")) {
+                // Hanya serang Raider (Pillager, Vindicator, Ravager, Witch, dll)
+                if (!(living instanceof Raider)) continue;
+            } else if (scheme.equals("HOSTILES_ONLY")) {
+                // Hanya serang Enemy (Semua mob hostile, otomatis tidak akan memukul passive/non-hostile mob)
                 if (!(living instanceof Enemy)) continue;
-            } else if (!wantedTypes.contains(living.getType().name())) {
-                continue;
+            } else {
+                // Fallback DEFAULT (mengikuti wantedTypes custom atau fallback ke Enemy)
+                if (wantedTypes.isEmpty()) {
+                    if (!(living instanceof Enemy)) continue;
+                } else if (!wantedTypes.contains(living.getType().name())) {
+                    continue;
+                }
             }
 
-            double score =
-                    nearestPriority ? living.getLocation().distanceSquared(bot.getLocation()) : living.getHealth();
+            double score = nearestPriority ? living.getLocation().distanceSquared(bot.getLocation()) : living.getHealth();
             if (score < bestScore) {
                 bestScore = score;
                 best = living;
@@ -209,7 +222,6 @@ public final class PveController {
         }
         return best;
     }
-
     private void faceTarget(Player bot, LivingEntity target) {
         Location face = BotNavUtil.faceToward(bot.getLocation(), target.getEyeLocation());
         bot.setRotation(face.getYaw(), face.getPitch());
