@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.Raid;
+import me.bill.fakePlayerPlugin.config.Config;
 
 /**
  * Per-bot auto-eat engine. When a bot's hunger drops to its configured threshold and it is carrying
@@ -219,9 +221,20 @@ public final class AutoEatController {
         }
     }
 
-    private boolean isEatable(ItemStack item, Set<Material> allowed) {
+    private boolean isEatable(ItemStack item, Set<Material> allowed, Player bot) {
         if (item == null || item.getAmount() <= 0) return false;
         if (!BotFoods.isFood(item.getType())) return false;
+
+    // LOGIKA OMINOUS BOTTLE SAFETY
+        if (item.getType() == Material.OMINOUS_BOTTLE && Config.isOminousBottleSafetyEnabled()) {
+        // Cari Raid terdekat dalam radius 128 blok
+            Raid raid = bot.getWorld().locateNearestRaid(bot.getLocation(), 128);
+        // Jika ada raid aktif dan statusnya BUKAN VICTORY, tolak minum
+            if (raid != null && raid.getStatus() != Raid.RaidStatus.VICTORY) {
+                return false;
+            }
+        }
+
         return allowed == null || allowed.isEmpty() || allowed.contains(item.getType());
     }
 
