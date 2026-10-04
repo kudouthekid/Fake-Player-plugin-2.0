@@ -209,6 +209,12 @@ public final class AutoEatController {
                 bot.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 6000, 0));
             }
             case HONEY_BOTTLE -> bot.removePotionEffect(PotionEffectType.POISON);
+
+            case OMINOUS_BOTTLE -> {
+                // Durasi Bad Omen vanilla adalah 100 menit (120000 ticks)
+                bot.addPotionEffect(new PotionEffect(PotionEffectType.BAD_OMEN, 120000, 0));
+            }
+                
             default -> {}
         }
     }
