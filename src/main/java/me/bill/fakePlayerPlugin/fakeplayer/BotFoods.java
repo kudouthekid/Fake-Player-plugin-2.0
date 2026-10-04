@@ -66,7 +66,7 @@ public final class BotFoods {
         add(m, Material.DRIED_KELP, 1, 0.3f, "ᴅʀɪᴇᴅ ᴋᴇʟᴘ");
         add(m, Material.COOKIE, 2, 0.1f, "ᴄᴏᴏᴋɪᴇ");
         add(m, Material.HONEY_BOTTLE, 6, 0.1f, "ʜᴏɴᴇʏ ʙᴏᴛᴛʟᴇ");
-
+        add(m, Material.OMINOUS_BOTTLE, 0, 0.0f, "ᴏᴍɪɴᴏᴜs ʙᴏᴛᴛʟᴇ");
         FOODS = Collections.unmodifiableMap(m);
     }
 
