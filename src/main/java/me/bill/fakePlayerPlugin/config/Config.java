@@ -16,6 +16,14 @@ import me.bill.fakePlayerPlugin.util.FppLogger;
 
 public final class Config {
 
+    public static boolean isOminousBottleSafetyEnabled() {
+        return cfg.getBoolean("custom-bot-settings.ominous-bottle-safety", true);
+    }
+    
+    public static String getPveAttackScheme() {
+        return cfg.getString("custom-bot-settings.attack-scheme", "HOSTILES_ONLY").toUpperCase();
+    }
+    
     private static FakePlayerPlugin plugin;
     private static FileConfiguration cfg;
     private static FileConfiguration debugCfg;
